@@ -17,8 +17,7 @@ logger = logging.getLogger("ai-ml-template")
 
 class FineTuneStrategy(ABC):
     @abstractmethod
-    def configure(self, model: nn.Module, optimizer_cfg: dict) -> tuple[nn.Module, list[dict]]:
-        ...
+    def configure(self, model: nn.Module, optimizer_cfg: dict) -> tuple[nn.Module, list[dict]]: ...
 
     def on_epoch_start(self, epoch: int, model: nn.Module) -> None:
         pass
@@ -78,7 +77,7 @@ class DifferentialFineTune(FineTuneStrategy):
             if parts & head_keywords:
                 is_head = True
             elif name.startswith("model."):
-                sub = name[len("model."):]
+                sub = name[len("model.") :]
                 sub_parts = set(sub.lower().split("."))
                 if sub_parts & head_keywords:
                     is_head = True
@@ -115,7 +114,7 @@ class LastNFineTune(FineTuneStrategy):
             param.requires_grad = False
 
         modules = self._get_trainable_modules(model)
-        last_n = modules[-min(self.n_layers, len(modules)):] if self.n_layers > 0 else []
+        last_n = modules[-min(self.n_layers, len(modules)) :] if self.n_layers > 0 else []
 
         trainable: list[nn.Parameter] = []
         for name, module in model.named_modules():
@@ -161,7 +160,7 @@ class HeadOnlyFineTune(FineTuneStrategy):
                 param.requires_grad = True
                 head_params.append(param)
             elif name.startswith("model."):
-                sub_parts = set(name[len("model."):].lower().split("."))
+                sub_parts = set(name[len("model.") :].lower().split("."))
                 if sub_parts & head_keywords:
                     param.requires_grad = True
                     head_params.append(param)
@@ -269,6 +268,7 @@ class FineTuner:
             datamodule_name = datamodule_cfg.get("name", "")
             if datamodule_name:
                 from src.data.datamodule import BaseDataModule
+
                 dm = BaseDataModule(config=self.config)
                 train_loader = dm.train_dataloader()
                 val_loader = dm.val_dataloader()

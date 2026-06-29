@@ -14,7 +14,9 @@ predictor = None
 async def load_model():
     global predictor
     ckpt_path = os.environ.get("CKPT_PATH", "checkpoints/best.pt")
-    predictor = PREDICTORS.instantiate("classification", ckpt_path=ckpt_path, device="cuda:0" if torch.cuda.is_available() else "cpu")
+    predictor = PREDICTORS.instantiate(
+        "classification", ckpt_path=ckpt_path, device="cuda:0" if torch.cuda.is_available() else "cpu"
+    )
 
 
 class PredictRequest(BaseModel):
@@ -35,10 +37,14 @@ def health():
 @app.post("/predict", response_model=PredictResponse)
 def predict(req: PredictRequest):
     results = [predictor.predict(inp) for inp in req.inputs]
-    return PredictResponse(predictions=results, model_name=predictor.model.__class__.__name__, framework_version="0.1.0")
+    return PredictResponse(
+        predictions=results, model_name=predictor.model.__class__.__name__, framework_version="0.1.0"
+    )
 
 
 @app.post("/predict/batch", response_model=PredictResponse)
 def predict_batch(req: PredictRequest):
     results = predictor.predict_batch(req.inputs)
-    return PredictResponse(predictions=results, model_name=predictor.model.__class__.__name__, framework_version="0.1.0")
+    return PredictResponse(
+        predictions=results, model_name=predictor.model.__class__.__name__, framework_version="0.1.0"
+    )

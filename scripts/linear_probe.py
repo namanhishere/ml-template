@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """Linear probe: freeze backbone, train linear classifier."""
+
 import hydra
 from omegaconf import DictConfig
 from src.training.trainer import Trainer
 from src.tools.linear_probe import LinearProbe
 from src.utils.distributed import setup_logging
 from src.utils.seed import set_seed
+
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def main(cfg: DictConfig):
@@ -20,7 +22,10 @@ def main(cfg: DictConfig):
     train_dl = trainer.datamodule.train_dataloader()
     val_dl = trainer.datamodule.val_dataloader()
     results = probe.train(train_dl, val_dl, max_epochs=tool_cfg.get("max_epochs", 50), lr=tool_cfg.get("lr", 0.01))
-    print(f"\nLinear Probe Results: train_acc={results.get('train/accuracy'):.4f}, val_acc={results.get('val/accuracy'):.4f}")
+    print(
+        f"\nLinear Probe Results: train_acc={results.get('train/accuracy'):.4f}, val_acc={results.get('val/accuracy'):.4f}"
+    )
+
 
 if __name__ == "__main__":
     main()

@@ -42,6 +42,11 @@ class TransformRegistry:
                 {"name": "ToTensor"},
             ],
         },
+        "none": {
+            "train": [],
+            "val": [],
+            "test": [],
+        },
     }
 
     _transform_map: dict[str, type] = {
@@ -88,7 +93,9 @@ class TransformRegistry:
         return T.Compose(transforms)
 
     @classmethod
-    def _resolve_pipeline(cls, name: str, augmentation_config: dict[str, Any] | None) -> dict[str, list[dict[str, Any]]]:
+    def _resolve_pipeline(
+        cls, name: str, augmentation_config: dict[str, Any] | None
+    ) -> dict[str, list[dict[str, Any]]]:
         if name in cls._presets:
             return cls._presets[name]
 

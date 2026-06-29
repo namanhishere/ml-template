@@ -32,13 +32,16 @@ def download_with_retry(
             temp_dest = dest + ".part"
             hasher = hashlib.sha256()
 
-            with open(temp_dest, "wb") as f, tqdm(
-                total=total_size,
-                unit="B",
-                unit_scale=True,
-                desc=os.path.basename(dest),
-                leave=False,
-            ) as pb:
+            with (
+                open(temp_dest, "wb") as f,
+                tqdm(
+                    total=total_size,
+                    unit="B",
+                    unit_scale=True,
+                    desc=os.path.basename(dest),
+                    leave=False,
+                ) as pb,
+            ):
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         f.write(chunk)
@@ -48,10 +51,7 @@ def download_with_retry(
             actual_hash = hasher.hexdigest()
 
             if expected_sha256 is not None and actual_hash != expected_sha256:
-                raise ValueError(
-                    f"SHA256 mismatch for {url}. "
-                    f"Expected: {expected_sha256}, Got: {actual_hash}"
-                )
+                raise ValueError(f"SHA256 mismatch for {url}. Expected: {expected_sha256}, Got: {actual_hash}")
 
             os.rename(temp_dest, dest)
             logger.info("Downloaded %s -> %s (%d bytes)", url, dest, total_size)
@@ -72,6 +72,4 @@ def download_with_retry(
                 )
                 time.sleep(wait)
             else:
-                raise RuntimeError(
-                    f"Failed to download {url} after {max_retries} attempts."
-                ) from e
+                raise RuntimeError(f"Failed to download {url} after {max_retries} attempts.") from e

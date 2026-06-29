@@ -124,7 +124,9 @@ class FeasibilityAnalyzer:
         experiment, original_dataloader = self._make_tiny_experiment(model, num_samples)
 
         all_batches = list(original_dataloader)
-        num_classes = self.config.get("model", {}).get("num_classes", self.config.get("dataset", {}).get("num_classes", 10))
+        num_classes = self.config.get("model", {}).get(
+            "num_classes", self.config.get("dataset", {}).get("num_classes", 10)
+        )
 
         shuffled_data: list[dict] = []
         for batch in all_batches:
@@ -199,7 +201,9 @@ class FeasibilityAnalyzer:
         model.to(self.device)
 
         batch_size = self.config.get("batch_size", self.config.get("trainer", {}).get("batch_size", 4))
-        num_classes = self.config.get("model", {}).get("num_classes", self.config.get("dataset", {}).get("num_classes", 10))
+        num_classes = self.config.get("model", {}).get(
+            "num_classes", self.config.get("dataset", {}).get("num_classes", 10)
+        )
 
         try:
             dummy = torch.randn(batch_size, 3, 224, 224, device=self.device)
@@ -322,9 +326,7 @@ class FeasibilityAnalyzer:
             "activation_std": act_std,
         }
 
-    def _make_tiny_experiment(
-        self, model: nn.Module, num_samples: int
-    ) -> tuple[Any, DataLoader]:
+    def _make_tiny_experiment(self, model: nn.Module, num_samples: int) -> tuple[Any, DataLoader]:
         if self.datamodule is not None:
             try:
                 full_dataset = self.datamodule.train_dataset
@@ -344,7 +346,9 @@ class FeasibilityAnalyzer:
         return experiment, dataloader
 
     def _make_synthetic_dataset(self, num_samples: int) -> Dataset:
-        num_classes = self.config.get("model", {}).get("num_classes", self.config.get("dataset", {}).get("num_classes", 10))
+        num_classes = self.config.get("model", {}).get(
+            "num_classes", self.config.get("dataset", {}).get("num_classes", 10)
+        )
         images = torch.randn(num_samples, 3, 224, 224)
         labels = torch.randint(0, num_classes, (num_samples,))
         return TensorDataset(images, labels)
@@ -352,6 +356,7 @@ class FeasibilityAnalyzer:
 
 def deepcopy_model(model: nn.Module) -> nn.Module:
     import copy
+
     try:
         return copy.deepcopy(model)
     except Exception:

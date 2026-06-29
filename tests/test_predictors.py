@@ -37,9 +37,7 @@ class TestClassificationPredictor:
             device="cpu",
             class_names=[f"c{i}" for i in range(10)],
         )
-        img = Image.fromarray(
-            (np.random.rand(256, 256, 3) * 255).astype(np.uint8)
-        )
+        img = Image.fromarray((np.random.rand(256, 256, 3) * 255).astype(np.uint8))
         result = predictor.predict(img)
         assert isinstance(result, dict)
         assert "class_id" in result
@@ -57,9 +55,7 @@ class TestClassificationPredictor:
             device="cpu",
             class_names=[f"c{i}" for i in range(10)],
         )
-        img = Image.fromarray(
-            (np.random.rand(224, 224, 3) * 255).astype(np.uint8)
-        )
+        img = Image.fromarray((np.random.rand(224, 224, 3) * 255).astype(np.uint8))
         result = predictor.predict(img)
         top5 = result["top5"]
         assert len(top5) == 5
@@ -75,12 +71,7 @@ class TestClassificationPredictor:
             device="cpu",
             class_names=[f"c{i}" for i in range(10)],
         )
-        imgs = [
-            Image.fromarray(
-                (np.random.rand(256, 256, 3) * 255).astype(np.uint8)
-            )
-            for _ in range(3)
-        ]
+        imgs = [Image.fromarray((np.random.rand(256, 256, 3) * 255).astype(np.uint8)) for _ in range(3)]
         results = predictor.predict_batch(imgs)
         assert len(results) == 3
         for r in results:
@@ -89,9 +80,7 @@ class TestClassificationPredictor:
     def test_preprocess_returns_tensor(self, seed):
         model = _ClassifierModel(num_classes=10)
         predictor = ClassificationPredictor(model=model, device="cpu")
-        img = Image.fromarray(
-            (np.random.rand(256, 256, 3) * 255).astype(np.uint8)
-        )
+        img = Image.fromarray((np.random.rand(256, 256, 3) * 255).astype(np.uint8))
         tensor = predictor.preprocess(img)
         assert isinstance(tensor, torch.Tensor)
         assert tensor.ndim == 4
@@ -116,9 +105,7 @@ class TestClassificationPredictor:
             device="cpu",
             class_names=[f"c{i}" for i in range(10)],
         )
-        img = Image.fromarray(
-            (np.random.rand(256, 256, 3) * 255).astype(np.uint8)
-        )
+        img = Image.fromarray((np.random.rand(256, 256, 3) * 255).astype(np.uint8))
         save_path = tmp_path / "pred_viz.png"
         fig = predictor.visualize(img, save_path=str(save_path))
         assert save_path.exists()
@@ -146,9 +133,7 @@ class TestClassificationPredictor:
     def test_predict_consistent_output(self, seed):
         model = _ClassifierModel(num_classes=10)
         predictor = ClassificationPredictor(model=model, device="cpu")
-        img = Image.fromarray(
-            (np.random.rand(256, 256, 3) * 255).astype(np.uint8)
-        )
+        img = Image.fromarray((np.random.rand(256, 256, 3) * 255).astype(np.uint8))
         torch.manual_seed(42)
         r1 = predictor.predict(img)
         torch.manual_seed(42)

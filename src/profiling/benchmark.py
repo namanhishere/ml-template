@@ -48,16 +48,18 @@ def benchmark_inference(
         latency_mean = float(np.mean(timings_arr))
         throughput_fps = bs / (latency_mean / 1000.0)
 
-        records.append({
-            "batch_size": bs,
-            "latency_mean_ms": latency_mean,
-            "latency_std_ms": float(np.std(timings_arr)),
-            "latency_p50_ms": float(np.percentile(timings_arr, 50)),
-            "latency_p95_ms": float(np.percentile(timings_arr, 95)),
-            "latency_p99_ms": float(np.percentile(timings_arr, 99)),
-            "latency_min_ms": float(np.min(timings_arr)),
-            "latency_max_ms": float(np.max(timings_arr)),
-            "throughput_fps": throughput_fps,
-        })
+        records.append(
+            {
+                "batch_size": bs,
+                "latency_mean_ms": latency_mean,
+                "latency_std_ms": float(np.std(timings_arr)),
+                "latency_p50_ms": float(np.percentile(timings_arr, 50)),
+                "latency_p95_ms": float(np.percentile(timings_arr, 95)),
+                "latency_p99_ms": float(np.percentile(timings_arr, 99)),
+                "latency_min_ms": float(np.min(timings_arr)),
+                "latency_max_ms": float(np.max(timings_arr)),
+                "throughput_fps": throughput_fps,
+            }
+        )
 
     return pd.DataFrame(records)

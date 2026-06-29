@@ -7,12 +7,10 @@ from typing import Any
 
 class ArtifactManager(ABC):
     @abstractmethod
-    def save_predictions(self, predictions: dict[str, Any], name: str, step: int | None = None) -> None:
-        ...
+    def save_predictions(self, predictions: dict[str, Any], name: str, step: int | None = None) -> None: ...
 
     @abstractmethod
-    def save_plot(self, fig: Any, name: str, step: int | None = None) -> None:
-        ...
+    def save_plot(self, fig: Any, name: str, step: int | None = None) -> None: ...
 
     @abstractmethod
     def save_confusion_matrix(
@@ -22,9 +20,7 @@ class ArtifactManager(ABC):
         class_names: list[str],
         name: str,
         step: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
-    def save_model(self, model_path: Path, name: str) -> None:
-        ...
+    def save_model(self, model_path: Path, name: str) -> None: ...

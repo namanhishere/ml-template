@@ -15,5 +15,4 @@ class BaseExporter(ABC):
         sample_input: Any,
         output_path: str | Path,
         **kwargs: Any,
-    ) -> Path:
-        ...
+    ) -> Path: ...

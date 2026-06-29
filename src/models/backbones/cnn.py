@@ -71,9 +71,7 @@ class _CNNBackend:
     def get_feature_dim(self, name: str) -> int:
         info = self._TORCHVISION_CNNS.get(name)
         if info is None:
-            raise ValueError(
-                f"Unknown CNN model '{name}'. Available: {self.list_available()}"
-            )
+            raise ValueError(f"Unknown CNN model '{name}'. Available: {self.list_available()}")
         return info[1]
 
     def list_available(self) -> list[str]:
@@ -91,17 +89,14 @@ class CNNBackbone(nn.Module):
         super().__init__()
         if model_name not in _CNNBackend._TORCHVISION_CNNS:
             raise ValueError(
-                f"Unknown CNN model '{model_name}'. "
-                f"Available: {sorted(_CNNBackend._TORCHVISION_CNNS.keys())}"
+                f"Unknown CNN model '{model_name}'. Available: {sorted(_CNNBackend._TORCHVISION_CNNS.keys())}"
             )
 
         self.model_name = model_name
         self.encoder = self._build_encoder(model_name, pretrained, weights)
         self.feature_dim = _CNNBackend._TORCHVISION_CNNS[model_name][1]
 
-    def _build_encoder(
-        self, name: str, pretrained: bool, weights: Any
-    ) -> nn.Module:
+    def _build_encoder(self, name: str, pretrained: bool, weights: Any) -> nn.Module:
         import torchvision.models as models
 
         if weights is None and pretrained:
@@ -117,6 +112,7 @@ class CNNBackbone(nn.Module):
         if weights is not None and pretrained:
             try:
                 from torchvision.models import get_weight
+
                 weights_enum = get_weight(weights)
                 model = model_fn(weights=weights_enum)
             except Exception:
@@ -138,8 +134,12 @@ class CNNBackbone(nn.Module):
 
 def _remove_classifier(model: nn.Module, name: str) -> None:
     resnet_like = (
-        "resnet", "resnext", "wide_resnet",
-        "shufflenet", "mnasnet", "regnet",
+        "resnet",
+        "resnext",
+        "wide_resnet",
+        "shufflenet",
+        "mnasnet",
+        "regnet",
     )
     if any(name.startswith(p) for p in resnet_like):
         model.fc = nn.Identity()

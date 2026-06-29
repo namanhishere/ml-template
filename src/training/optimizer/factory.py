@@ -95,6 +95,4 @@ def build_optimizer(model: torch.nn.Module, cfg: Any) -> torch.optim.Optimizer:
         )
 
     else:
-        raise ValueError(
-            f"Unknown optimizer: {name}. Available: adam, adamw, sgd, rmsprop"
-        )
+        raise ValueError(f"Unknown optimizer: {name}. Available: adam, adamw, sgd, rmsprop")

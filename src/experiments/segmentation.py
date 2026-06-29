@@ -96,9 +96,7 @@ class SegmentationExperiment(BaseExperiment):
             self._epoch_metrics[key].append(v)
         metrics.reset()
 
-    def visualize(
-        self, batch: dict[str, Any], outputs: dict[str, Any], save_dir: Path, prefix: str
-    ) -> None:
+    def visualize(self, batch: dict[str, Any], outputs: dict[str, Any], save_dir: Path, prefix: str) -> None:
         images = batch["image"].cpu()
         masks = batch["mask"].cpu()
         logits = outputs["logits"].detach().cpu()

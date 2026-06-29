@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Analyze training metrics history and auto-diagnose learning behavior."""
+
 import argparse
 import json
 from pathlib import Path
@@ -7,6 +8,7 @@ import torch
 from src.training.checkpoint import load_checkpoint
 from src.tools.learning_curves import LearningCurveAnalyzer
 from src.tools.reporting import ReportGenerator
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,7 +19,7 @@ def main():
     parser.add_argument("--divergence-ratio", type=float, default=3.0)
     args = parser.parse_args()
 
-    if args.ckpt_path.endswith('.json'):
+    if args.ckpt_path.endswith(".json"):
         with open(args.ckpt_path) as f:
             data = json.load(f)
             metrics_history = data if isinstance(data, list) else data.get("metrics_history", [])
@@ -42,6 +44,7 @@ def main():
     reporter = ReportGenerator(output_dir=output_dir)
     report_path = reporter.generate_learning_curve_report(diagnosis, metrics_history, output_dir)
     print(f"\nReport saved to: {report_path}")
+
 
 if __name__ == "__main__":
     main()

@@ -42,8 +42,13 @@ class TestBuildCheckpoint:
         ckpt = build_checkpoint(trainer)
 
         required_keys = [
-            "model_state", "optimizer_state", "scheduler_state",
-            "epoch", "global_step", "timestamp", "pytorch_version",
+            "model_state",
+            "optimizer_state",
+            "scheduler_state",
+            "epoch",
+            "global_step",
+            "timestamp",
+            "pytorch_version",
         ]
         for key in required_keys:
             assert key in ckpt, f"Missing key: {key}"

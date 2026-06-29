@@ -23,9 +23,7 @@ class _ViTBackend:
     def get_feature_dim(self, name: str) -> int:
         info = self._VISION_TRANSFORMERS.get(name)
         if info is None:
-            raise ValueError(
-                f"Unknown ViT model '{name}'. Available: {self.list_available()}"
-            )
+            raise ValueError(f"Unknown ViT model '{name}'. Available: {self.list_available()}")
         return info[1]
 
     def list_available(self) -> list[str]:
@@ -44,8 +42,7 @@ class ViTBackbone(nn.Module):
         super().__init__()
         if model_name not in _ViTBackend._VISION_TRANSFORMERS:
             raise ValueError(
-                f"Unknown ViT model '{model_name}'. "
-                f"Available: {sorted(_ViTBackend._VISION_TRANSFORMERS.keys())}"
+                f"Unknown ViT model '{model_name}'. Available: {sorted(_ViTBackend._VISION_TRANSFORMERS.keys())}"
             )
 
         self.model_name = model_name
@@ -53,9 +50,7 @@ class ViTBackbone(nn.Module):
         self.image_size = image_size
         self.vit = self._build_vit(model_name, pretrained, weights, image_size)
 
-    def _build_vit(
-        self, name: str, pretrained: bool, weights: Any, image_size: int
-    ) -> nn.Module:
+    def _build_vit(self, name: str, pretrained: bool, weights: Any, image_size: int) -> nn.Module:
         import torchvision.models as models
 
         if weights is None and pretrained:
@@ -71,6 +66,7 @@ class ViTBackbone(nn.Module):
         if weights is not None and pretrained:
             try:
                 from torchvision.models import get_weight
+
                 weights_enum = get_weight(weights)
                 model = model_fn(weights=weights_enum, image_size=image_size)
             except Exception:

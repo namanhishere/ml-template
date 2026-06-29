@@ -17,9 +17,7 @@ class Registry:
 
     def get(self, name: str) -> Callable[..., Any]:
         if name not in self._items:
-            raise KeyError(
-                f"{self.name} '{name}' not found. Available: {list(self._items.keys())}"
-            )
+            raise KeyError(f"{self.name} '{name}' not found. Available: {list(self._items.keys())}")
         return self._items[name]
 
     def instantiate(self, name: str, *args: Any, **kwargs: Any) -> Any:

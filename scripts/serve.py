@@ -10,6 +10,7 @@ def main():
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     import os
+
     os.environ["CKPT_PATH"] = args.ckpt_path
     uvicorn.run("src.serving.app:app", host=args.host, port=args.port, reload=False)
 

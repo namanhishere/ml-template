@@ -158,6 +158,7 @@ class ReportGenerator:
     def _has_plotly(self) -> bool:
         try:
             import plotly  # noqa: F401
+
             return True
         except ImportError:
             return False
@@ -198,11 +199,13 @@ class ReportGenerator:
             f'<div class="value {"pass" if dead < 10 else "warn"}">{dead:.1f}%</div></div>'
         )
 
-        sections.append({
-            "icon": "",
-            "title": "Feasibility Summary",
-            "body": f'<div class="metric-grid">{"".join(cards)}</div>',
-        })
+        sections.append(
+            {
+                "icon": "",
+                "title": "Feasibility Summary",
+                "body": f'<div class="metric-grid">{"".join(cards)}</div>',
+            }
+        )
 
         overfit_body = "<table>"
         for k, v in sorted(overfit.items()):
@@ -214,11 +217,13 @@ class ReportGenerator:
             overfit_body += "<tr><td colspan='2'>No data</td></tr>"
         overfit_body += "</table>"
 
-        sections.append({
-            "icon": "",
-            "title": "Overfit Test Details",
-            "body": overfit_body,
-        })
+        sections.append(
+            {
+                "icon": "",
+                "title": "Overfit Test Details",
+                "body": overfit_body,
+            }
+        )
 
         rl_body = "<table>"
         for k, v in sorted(random_label.items()):
@@ -227,11 +232,13 @@ class ReportGenerator:
             else:
                 rl_body += f"<tr><td>{k}</td><td>{v}</td></tr>"
         rl_body += "</table>"
-        sections.append({
-            "icon": "",
-            "title": "Random Label Test Details",
-            "body": rl_body,
-        })
+        sections.append(
+            {
+                "icon": "",
+                "title": "Random Label Test Details",
+                "body": rl_body,
+            }
+        )
 
         if grad:
             grad_body = "<table>"
@@ -243,13 +250,17 @@ class ReportGenerator:
                 else:
                     grad_body += f"<tr><td>{k}</td><td>{v}</td></tr>"
             if "layer_stats" in grad:
-                grad_body += "<tr><td>layer_stats</td><td><pre>" + json.dumps(grad["layer_stats"], indent=2) + "</pre></td></tr>"
+                grad_body += (
+                    "<tr><td>layer_stats</td><td><pre>" + json.dumps(grad["layer_stats"], indent=2) + "</pre></td></tr>"
+                )
             grad_body += "</table>"
-            sections.append({
-                "icon": "",
-                "title": "Gradient Sanity Check",
-                "body": grad_body,
-            })
+            sections.append(
+                {
+                    "icon": "",
+                    "title": "Gradient Sanity Check",
+                    "body": grad_body,
+                }
+            )
 
         if act:
             act_body = "<table>"
@@ -259,11 +270,13 @@ class ReportGenerator:
                 else:
                     act_body += f"<tr><td>{k}</td><td>{v}</td></tr>"
             act_body += "</table>"
-            sections.append({
-                "icon": "",
-                "title": "Activation Statistics",
-                "body": act_body,
-            })
+            sections.append(
+                {
+                    "icon": "",
+                    "title": "Activation Statistics",
+                    "body": act_body,
+                }
+            )
 
         html = self._build_html(sections, "Feasibility Analysis Report")
         out_path = exp_dir / "index.html"
@@ -293,8 +306,10 @@ class ReportGenerator:
         if class_df is not None:
             try:
                 chart = self._plot_bar_chart(
-                    {"Class": class_df.index.tolist() if hasattr(class_df, "index") else list(range(len(class_df))),
-                     "Accuracy": class_df.values.tolist() if hasattr(class_df, "values") else class_df},
+                    {
+                        "Class": class_df.index.tolist() if hasattr(class_df, "index") else list(range(len(class_df))),
+                        "Accuracy": class_df.values.tolist() if hasattr(class_df, "values") else class_df,
+                    },
                     "Per-Class Ablation Impact",
                 )
                 if chart:
@@ -305,14 +320,18 @@ class ReportGenerator:
         chart_bodies = ""
         for chart in charts:
             chart_bodies += f'<div class="chart-container" id="chart_{hash(chart) % 100000}"></div>'
-            chart_bodies += f"<script>Plotly.newPlot('chart_{hash(chart) % 100000}', {chart}).then(function(){{}});</script>"
+            chart_bodies += (
+                f"<script>Plotly.newPlot('chart_{hash(chart) % 100000}', {chart}).then(function(){{}});</script>"
+            )
 
         if chart_bodies:
-            sections.append({
-                "icon": "",
-                "title": "Ablation Charts",
-                "body": chart_bodies,
-            })
+            sections.append(
+                {
+                    "icon": "",
+                    "title": "Ablation Charts",
+                    "body": chart_bodies,
+                }
+            )
 
         if influence:
             inf_body = "<table><tr><th>Metric</th><th>Value</th></tr>"
@@ -325,11 +344,13 @@ class ReportGenerator:
                     v_repr = str(v)
                 inf_body += f"<tr><td>{k}</td><td>{v_repr}</td></tr>"
             inf_body += "</table>"
-            sections.append({
-                "icon": "",
-                "title": "Influence Scores",
-                "body": inf_body,
-            })
+            sections.append(
+                {
+                    "icon": "",
+                    "title": "Influence Scores",
+                    "body": inf_body,
+                }
+            )
 
         html = self._build_html(sections, "Data Ablation Report")
         out_path = exp_dir / "index.html"
@@ -344,9 +365,15 @@ class ReportGenerator:
         sections: list[dict] = []
 
         status = diagnosis.get("status", "unknown")
-        status_class = {"normal": "success", "overfitting": "warning", "underfitting": "warning",
-                        "diverging": "failure", "plateau": "warning", "high_lr": "failure",
-                        "low_lr": "warning"}.get(status, "warning")
+        status_class = {
+            "normal": "success",
+            "overfitting": "warning",
+            "underfitting": "warning",
+            "diverging": "failure",
+            "plateau": "warning",
+            "high_lr": "failure",
+            "low_lr": "warning",
+        }.get(status, "warning")
 
         cards = []
         cards.append(
@@ -364,22 +391,26 @@ class ReportGenerator:
             f'<div class="value {"warn" if recs else "pass"}">{len(recs)}</div></div>'
         )
 
-        sections.append({
-            "icon": "",
-            "title": "Training Diagnosis",
-            "body": f'<div class="metric-grid">{"".join(cards)}</div>',
-        })
+        sections.append(
+            {
+                "icon": "",
+                "title": "Training Diagnosis",
+                "body": f'<div class="metric-grid">{"".join(cards)}</div>',
+            }
+        )
 
         if recs:
             rec_body = "<ul style='padding-left:20px;'>"
             for r in recs:
                 rec_body += f"<li>{r}</li>"
             rec_body += "</ul>"
-            sections.append({
-                "icon": "",
-                "title": "Recommendations",
-                "body": rec_body,
-            })
+            sections.append(
+                {
+                    "icon": "",
+                    "title": "Recommendations",
+                    "body": rec_body,
+                }
+            )
 
         details = diagnosis.get("details", {})
         if details:
@@ -387,11 +418,13 @@ class ReportGenerator:
             for k, v in sorted(details.items()):
                 det_body += f"<tr><td>{k}</td><td>{v}</td></tr>"
             det_body += "</table>"
-            sections.append({
-                "icon": "",
-                "title": "Diagnostic Details",
-                "body": det_body,
-            })
+            sections.append(
+                {
+                    "icon": "",
+                    "title": "Diagnostic Details",
+                    "body": det_body,
+                }
+            )
 
         if metrics_history:
             try:
@@ -400,11 +433,13 @@ class ReportGenerator:
                     chart_id = "learning_curve_chart"
                     chart_body = f'<div class="chart-container" id="{chart_id}"></div>'
                     chart_body += f"<script>Plotly.newPlot('{chart_id}', {chart}).then(function(){{}});</script>"
-                    sections.append({
-                        "icon": "",
-                        "title": "Learning Curves",
-                        "body": chart_body,
-                    })
+                    sections.append(
+                        {
+                            "icon": "",
+                            "title": "Learning Curves",
+                            "body": chart_body,
+                        }
+                    )
             except Exception as e:
                 logger.warning("Failed to generate learning curve chart: %s", e)
 
@@ -421,23 +456,27 @@ class ReportGenerator:
         if "feasibility" in all_results:
             try:
                 sub_path = self.generate_feasibility_report(all_results["feasibility"], output_dir=exp_dir)
-                sections.append({
-                    "icon": "",
-                    "title": "Feasibility Analysis",
-                    "body": f'<p>See <a href="{sub_path.name}" target="_blank">full feasibility report</a></p>'
-                            f'<pre>{json.dumps(all_results["feasibility"], indent=2, default=str)[:2000]}</pre>',
-                })
+                sections.append(
+                    {
+                        "icon": "",
+                        "title": "Feasibility Analysis",
+                        "body": f'<p>See <a href="{sub_path.name}" target="_blank">full feasibility report</a></p>'
+                        f"<pre>{json.dumps(all_results['feasibility'], indent=2, default=str)[:2000]}</pre>",
+                    }
+                )
             except Exception as e:
                 logger.warning("Failed to embed feasibility: %s", e)
 
         if "ablation" in all_results:
             try:
                 sub_path = self.generate_ablation_report(all_results["ablation"], output_dir=exp_dir)
-                sections.append({
-                    "icon": "",
-                    "title": "Data Ablation",
-                    "body": f'<p>See <a href="{sub_path.name}" target="_blank">full ablation report</a></p>',
-                })
+                sections.append(
+                    {
+                        "icon": "",
+                        "title": "Data Ablation",
+                        "body": f'<p>See <a href="{sub_path.name}" target="_blank">full ablation report</a></p>',
+                    }
+                )
             except Exception as e:
                 logger.warning("Failed to embed ablation: %s", e)
 
@@ -448,11 +487,13 @@ class ReportGenerator:
                     sub_path = self.generate_learning_curve_report(
                         diag, all_results.get("metrics_history", []), output_dir=exp_dir
                     )
-                    sections.append({
-                        "icon": "",
-                        "title": "Learning Curve Analysis",
-                        "body": f'<p>See <a href="{sub_path.name}" target="_blank">full learning curve report</a></p>',
-                    })
+                    sections.append(
+                        {
+                            "icon": "",
+                            "title": "Learning Curve Analysis",
+                            "body": f'<p>See <a href="{sub_path.name}" target="_blank">full learning curve report</a></p>',
+                        }
+                    )
                 except Exception as e:
                     logger.warning("Failed to embed learning curves: %s", e)
 
@@ -464,11 +505,13 @@ class ReportGenerator:
                     if isinstance(v, dict):
                         fs_body += f"<tr><td>{k}</td><td>{v.get('mean', 0):.2%}</td><td>{v.get('std', 0):.2%}</td></tr>"
                 fs_body += "</table>"
-                sections.append({
-                    "icon": "",
-                    "title": "Few-Shot Evaluation",
-                    "body": fs_body,
-                })
+                sections.append(
+                    {
+                        "icon": "",
+                        "title": "Few-Shot Evaluation",
+                        "body": fs_body,
+                    }
+                )
             except Exception as e:
                 logger.warning("Failed to embed few-shot: %s", e)
 
@@ -480,11 +523,13 @@ class ReportGenerator:
                     if isinstance(v, float):
                         lp_body += f"<tr><td>{k}</td><td>{v:.4f}</td></tr>"
                 lp_body += "</table>"
-                sections.append({
-                    "icon": "",
-                    "title": "Linear Probe Results",
-                    "body": lp_body,
-                })
+                sections.append(
+                    {
+                        "icon": "",
+                        "title": "Linear Probe Results",
+                        "body": lp_body,
+                    }
+                )
             except Exception as e:
                 logger.warning("Failed to embed linear probe: %s", e)
 
@@ -539,10 +584,10 @@ class ReportGenerator:
         for m in metrics_history:
             keys.update(m.keys())
 
-        train_keys = sorted([k for k in keys if k.startswith("train")],
-                            key=lambda x: (0 if "loss" in x.lower() else 1, x))
-        val_keys = sorted([k for k in keys if k.startswith("val")],
-                          key=lambda x: (0 if "loss" in x.lower() else 1, x))
+        train_keys = sorted(
+            [k for k in keys if k.startswith("train")], key=lambda x: (0 if "loss" in x.lower() else 1, x)
+        )
+        val_keys = sorted([k for k in keys if k.startswith("val")], key=lambda x: (0 if "loss" in x.lower() else 1, x))
 
         epochs = list(range(1, len(metrics_history) + 1))
 
@@ -554,13 +599,15 @@ class ReportGenerator:
                 continue
             color = colors[i % len(colors)]
             dash = "dash" if key.startswith("val") else "solid"
-            fig.add_trace(go.Scatter(
-                x=list(range(1, len(values) + 1)),
-                y=values,
-                mode="lines",
-                name=key,
-                line=dict(color=color, dash=dash),
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=list(range(1, len(values) + 1)),
+                    y=values,
+                    mode="lines",
+                    name=key,
+                    line=dict(color=color, dash=dash),
+                )
+            )
 
         fig.update_layout(
             title=title,
@@ -585,11 +632,15 @@ class ReportGenerator:
         y = df[y_col].tolist() if hasattr(df, "columns") else df.get(y_col, [])
 
         fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=x, y=y, mode="lines+markers",
-            line=dict(color="#89b4fa", width=2),
-            marker=dict(size=8, color="#89b4fa"),
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="lines+markers",
+                line=dict(color="#89b4fa", width=2),
+                marker=dict(size=8, color="#89b4fa"),
+            )
+        )
 
         fig.update_layout(
             title=f"Ablation: {y_col} vs {x_col}",
@@ -612,11 +663,13 @@ class ReportGenerator:
             return ""
 
         fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=values[0],
-            y=[float(v) for v in values[1]],
-            marker_color="#89b4fa",
-        ))
+        fig.add_trace(
+            go.Bar(
+                x=values[0],
+                y=[float(v) for v in values[1]],
+                marker_color="#89b4fa",
+            )
+        )
 
         fig.update_layout(
             title=title,

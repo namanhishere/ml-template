@@ -55,7 +55,11 @@ class Evaluator:
         }
 
         if hasattr(self.config, "model"):
-            report["model"] = self.config.model.get("name", "unknown") if hasattr(self.config.model, "get") else str(self.config.model)
+            report["model"] = (
+                self.config.model.get("name", "unknown")
+                if hasattr(self.config.model, "get")
+                else str(self.config.model)
+            )
 
         report_path = output_dir / "report.json"
         with open(report_path, "w") as f:

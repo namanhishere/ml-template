@@ -37,18 +37,12 @@ class WarmupCosineScheduler(torch.optim.lr_scheduler._LRScheduler):
         epoch = self.last_epoch
         if epoch < self.warmup_epochs:
             alpha = epoch / max(self.warmup_epochs, 1)
-            return [
-                self.warmup_start_lr + (base_lr - self.warmup_start_lr) * alpha
-                for base_lr in self.base_lrs
-            ]
+            return [self.warmup_start_lr + (base_lr - self.warmup_start_lr) * alpha for base_lr in self.base_lrs]
         else:
             cosine_epoch = epoch - self.warmup_epochs
             progress = cosine_epoch / max(self.cosine_epochs - 1, 1)
             factor = 0.5 * (1.0 + math.cos(math.pi * progress))
-            return [
-                self.eta_min + (base_lr - self.eta_min) * factor
-                for base_lr in self.base_lrs
-            ]
+            return [self.eta_min + (base_lr - self.eta_min) * factor for base_lr in self.base_lrs]
 
 
 def build_scheduler(
@@ -69,17 +63,13 @@ def build_scheduler(
     if name == "cosine":
         max_epochs = int(cfg.get("max_epochs", scheduler_cfg.get("T_max", 100)))
         eta_min = float(params.get("eta_min", 0.0))
-        logger.info(
-            "Building CosineAnnealingLR: T_max=%d eta_min=%.2e", max_epochs, eta_min
-        )
+        logger.info("Building CosineAnnealingLR: T_max=%d eta_min=%.2e", max_epochs, eta_min)
         return CosineAnnealingLR(optimizer, T_max=max_epochs, eta_min=eta_min)
 
     elif name == "step":
         step_size = int(params.get("step_size", 30))
         gamma = float(params.get("gamma", 0.1))
-        logger.info(
-            "Building StepLR: step_size=%d gamma=%.2f", step_size, gamma
-        )
+        logger.info("Building StepLR: step_size=%d gamma=%.2f", step_size, gamma)
         return StepLR(optimizer, step_size=step_size, gamma=gamma)
 
     elif name == "plateau":
@@ -92,9 +82,7 @@ def build_scheduler(
             factor,
             patience,
         )
-        return ReduceLROnPlateau(
-            optimizer, mode=mode, factor=factor, patience=patience
-        )
+        return ReduceLROnPlateau(optimizer, mode=mode, factor=factor, patience=patience)
 
     elif name == "onecycle":
         max_lr = float(params.get("max_lr", 1e-3))
@@ -144,6 +132,4 @@ def build_scheduler(
         )
 
     else:
-        raise ValueError(
-            f"Unknown scheduler: {name}. Available: cosine, step, plateau, onecycle, cosine_warmup"
-        )
+        raise ValueError(f"Unknown scheduler: {name}. Available: cosine, step, plateau, onecycle, cosine_warmup")

@@ -46,8 +46,7 @@ class LinearProbe:
                     bn_random += 1
         if bn_found > 0 and bn_random >= bn_found * 0.5:
             logger.warning(
-                "Many BatchNorm layers have non-default stats: %d/%d. "
-                "Backbone may not be pretrained.",
+                "Many BatchNorm layers have non-default stats: %d/%d. Backbone may not be pretrained.",
                 bn_random,
                 bn_found,
             )
@@ -216,15 +215,17 @@ class LinearProbe:
             backbone = BackboneFactory.create(name, pretrained=True)
             probe = LinearProbe(backbone, self.num_classes, self.config)
             metrics = probe.train(train_loader, val_loader, max_epochs=30, lr=0.01)
-            results.append({
-                "backbone": name,
-                "train_acc": metrics["train_acc"],
-                "val_acc": metrics.get("val_acc", float("nan")),
-                "train_loss": metrics["train_loss"],
-                "val_loss": metrics.get("val_loss", float("nan")),
-                "feature_dim": probe.feature_dim,
-                "trainable_params": count_parameters(probe.head, trainable_only=True),
-            })
+            results.append(
+                {
+                    "backbone": name,
+                    "train_acc": metrics["train_acc"],
+                    "val_acc": metrics.get("val_acc", float("nan")),
+                    "train_loss": metrics["train_loss"],
+                    "val_loss": metrics.get("val_loss", float("nan")),
+                    "feature_dim": probe.feature_dim,
+                    "trainable_params": count_parameters(probe.head, trainable_only=True),
+                }
+            )
 
         df = pd.DataFrame(results)
         logger.info("Backbone comparison:\n%s", df.to_string())

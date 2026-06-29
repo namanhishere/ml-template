@@ -1,0 +1,76 @@
+defaults:
+  - experiment: classification
+  - model: conv_demo
+  - dataset: synthetic
+  - optimizer: adam
+  - scheduler: cosine
+  - loss: cross_entropy
+  - trainer: default
+  - _self_
+
+seed: 42
+
+experiment:
+  name: classification
+  num_classes: ${dataset.num_classes}
+  loss: ${loss}
+
+model:
+  name: conv_demo
+  num_classes: ${dataset.num_classes}
+  channels: [32, 64, 128, 256]
+  dropout: 0.0
+
+dataset:
+  name: synthetic
+  num_samples_per_class: 100
+  num_classes: 10
+  image_size: 64
+  seed: 42
+
+augmentation: none
+
+loss:
+  name: cross_entropy
+  label_smoothing: 0.0
+
+optimizer:
+  name: adam
+  params:
+    lr: 0.001
+    weight_decay: 0.0001
+
+scheduler:
+  name: cosine
+  warmup_epochs: 0
+  T_max: ${trainer.max_epochs}
+
+trainer:
+  max_epochs: 3
+  batch_size: 32
+  num_workers: 0
+  precision: fp32
+  grad_accumulation: 1
+  checkpoint:
+    save_dir: ./checkpoints_demo
+    save_top_k: 1
+    save_last: true
+    save_every_n_epochs: 1
+    monitor: val/loss
+    mode: min
+
+callbacks:
+  - name: checkpoint
+    save_dir: ./checkpoints_demo
+    save_top_k: 1
+    save_last: true
+    save_every_n_epochs: 1
+    monitor: val/loss
+    mode: min
+  - name: progress
+
+hydra:
+  run:
+    dir: ./outputs_demo/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ./outputs_demo/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}

@@ -32,6 +32,7 @@ class MLflowCallback(Callback):
 
         try:
             import mlflow as mf
+
             self._mlflow = mf
         except ImportError:
             logger.warning("mlflow is not installed. MLflowCallback will be a no-op.")

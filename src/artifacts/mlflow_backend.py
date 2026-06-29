@@ -11,9 +11,7 @@ class MLflowArtifactManager(ArtifactManager):
         try:
             import mlflow  # noqa: F401
         except ImportError:
-            raise ImportError(
-                "mlflow is required for MLflowArtifactManager. Install it with: pip install mlflow"
-            )
+            raise ImportError("mlflow is required for MLflowArtifactManager. Install it with: pip install mlflow")
 
     def save_predictions(self, predictions: dict[str, Any], name: str, step: int | None = None) -> None:
         import mlflow

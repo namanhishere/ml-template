@@ -16,8 +16,7 @@ class BaseModel(nn.Module, ABC):
         self.head: nn.Module | None = None
 
     @abstractmethod
-    def forward(self, x: Any) -> Dict[str, Any]:
-        ...
+    def forward(self, x: Any) -> Dict[str, Any]: ...
 
     def get_backbone(self) -> nn.Module:
         if self.backbone is None:

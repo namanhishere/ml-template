@@ -24,13 +24,9 @@ class TrainConfigValidator(BaseModel):
         if self.image_size is not None:
             h, w = self.image_size
             if h % 32 != 0:
-                raise ValueError(
-                    f"image_size height ({h}) should be divisible by 32 for most backbones."
-                )
+                raise ValueError(f"image_size height ({h}) should be divisible by 32 for most backbones.")
             if w % 32 != 0:
-                raise ValueError(
-                    f"image_size width ({w}) should be divisible by 32 for most backbones."
-                )
+                raise ValueError(f"image_size width ({w}) should be divisible by 32 for most backbones.")
         return self
 
 

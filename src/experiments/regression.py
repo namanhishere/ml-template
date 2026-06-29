@@ -86,9 +86,7 @@ class RegressionExperiment(BaseExperiment):
     def on_epoch_end(self, phase: str) -> None:
         pass
 
-    def visualize(
-        self, batch: dict[str, Any], outputs: dict[str, Any], save_dir: Path, prefix: str
-    ) -> None:
+    def visualize(self, batch: dict[str, Any], outputs: dict[str, Any], save_dir: Path, prefix: str) -> None:
         values = outputs["values"].detach().cpu()
         targets = batch.get("target")
         if targets is None:

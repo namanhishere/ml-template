@@ -57,12 +57,14 @@ class ClassificationExperiment(BaseExperiment):
         return {"total": loss, "ce": loss}
 
     def compute_metrics(self, outputs: dict[str, Any], batch: dict[str, Any], phase: str) -> dict[str, float]:
+        if outputs is None or batch is None:
+            return {}
         logits = outputs["logits"]
         labels = batch["label"].to(self.device)
-        preds = torch.argmax(logits, dim=1)
+        probs = torch.softmax(logits, dim=1)
 
         metrics = self.train_metrics if phase == "train" else self.val_metrics
-        metrics.update(preds, labels)
+        metrics.update(probs, labels)
         return {}
 
     def postprocess(self, outputs: dict[str, Any]) -> Any:
@@ -77,9 +79,7 @@ class ClassificationExperiment(BaseExperiment):
             self._epoch_metrics[key].append(v)
         metrics.reset()
 
-    def visualize(
-        self, batch: dict[str, Any], outputs: dict[str, Any], save_dir: Path, prefix: str
-    ) -> None:
+    def visualize(self, batch: dict[str, Any], outputs: dict[str, Any], save_dir: Path, prefix: str) -> None:
         images = batch["image"].cpu()
         labels = batch["label"].cpu()
         preds = torch.argmax(outputs["logits"].detach().cpu(), dim=1)
@@ -122,9 +122,17 @@ class ClassificationExperiment(BaseExperiment):
             r, c = divmod(idx, cols)
             x = c / cols + 0.5 / cols
             y = 1.0 - (r + 0.92) / rows
-            ax.text(x, y, titles[idx], transform=ax.transAxes, fontsize=6,
-                    ha="center", va="top", color=colors[idx],
-                    bbox=dict(boxstyle="round,pad=0.1", facecolor="white", alpha=0.7))
+            ax.text(
+                x,
+                y,
+                titles[idx],
+                transform=ax.transAxes,
+                fontsize=6,
+                ha="center",
+                va="top",
+                color=colors[idx],
+                bbox=dict(boxstyle="round,pad=0.1", facecolor="white", alpha=0.7),
+            )
 
         save_dir.mkdir(parents=True, exist_ok=True)
         plt.tight_layout()

@@ -27,12 +27,10 @@ class BasePredictor(ABC):
         self.model.eval()
 
     @abstractmethod
-    def preprocess(self, raw_input: Any) -> torch.Tensor:
-        ...
+    def preprocess(self, raw_input: Any) -> torch.Tensor: ...
 
     @abstractmethod
-    def postprocess(self, outputs: dict[str, Any]) -> Any:
-        ...
+    def postprocess(self, outputs: dict[str, Any]) -> Any: ...
 
     def _forward(self, inputs: torch.Tensor) -> dict[str, Any]:
         if self.experiment is not None:

@@ -8,9 +8,7 @@ import torch.nn as nn
 
 def get_model_size_mb(model: nn.Module) -> float:
     total_params = sum(p.numel() for p in model.parameters())
-    total_size_bytes = sum(
-        p.numel() * p.element_size() for p in model.parameters()
-    )
+    total_size_bytes = sum(p.numel() * p.element_size() for p in model.parameters())
     return total_size_bytes / 1e6
 
 

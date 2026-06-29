@@ -71,16 +71,16 @@ class LearningCurveAnalyzer:
 
         train_losses = self._extract_metric(metrics_history, "train/loss")
         val_losses = self._extract_metric(metrics_history, "val/loss")
-        acc_vals = self._extract_metric(metrics_history, "val/acc") or \
-            self._extract_metric(metrics_history, "val_accuracy") or \
-            self._extract_metric(metrics_history, "accuracy")
+        acc_vals = (
+            self._extract_metric(metrics_history, "val/acc")
+            or self._extract_metric(metrics_history, "val_accuracy")
+            or self._extract_metric(metrics_history, "accuracy")
+        )
 
         if train_losses:
             details["final_train_loss"] = train_losses[-1]
             details["initial_train_loss"] = train_losses[0]
-            details["train_loss_change_pct"] = (
-                (train_losses[-1] - train_losses[0]) / (train_losses[0] + 1e-8) * 100
-            )
+            details["train_loss_change_pct"] = (train_losses[-1] - train_losses[0]) / (train_losses[0] + 1e-8) * 100
 
         if val_losses:
             details["final_val_loss"] = val_losses[-1]
@@ -117,8 +117,8 @@ class LearningCurveAnalyzer:
         if len(val_losses) < self.overfit_window:
             return None
 
-        recent_train = train_losses[-self.overfit_window:]
-        recent_val = val_losses[-self.overfit_window:]
+        recent_train = train_losses[-self.overfit_window :]
+        recent_val = val_losses[-self.overfit_window :]
 
         train_decreasing = recent_train[-1] < recent_train[0] * 0.95
 
@@ -165,8 +165,7 @@ class LearningCurveAnalyzer:
         train_drop_pct = abs(train_slope * n) / (recent_train[0] + 1e-8) * 100
 
         if both_decreasing and train_drop_pct > 3.0:
-            acc_vals = self._extract_metric(metrics, "val/acc") or \
-                self._extract_metric(metrics, "accuracy")
+            acc_vals = self._extract_metric(metrics, "val/acc") or self._extract_metric(metrics, "accuracy")
             if acc_vals and acc_vals[-1] < 0.5 * (1.0 - 1e-4):
                 return {
                     "status": "underfitting",
@@ -236,8 +235,8 @@ class LearningCurveAnalyzer:
         if len(val_losses) < self.plateau_window:
             return None
 
-        recent_train = train_losses[-self.plateau_window:]
-        recent_val = val_losses[-self.plateau_window:]
+        recent_train = train_losses[-self.plateau_window :]
+        recent_val = val_losses[-self.plateau_window :]
 
         if len(recent_val) < 2:
             return None
@@ -339,7 +338,7 @@ class LearningCurveAnalyzer:
                 return best_epoch
 
         if len(val_losses) > self.overfit_window:
-            recent = val_losses[-self.overfit_window:]
+            recent = val_losses[-self.overfit_window :]
             if all(recent[i + 1] > recent[i] for i in range(len(recent) - 1)):
                 return best_epoch
 

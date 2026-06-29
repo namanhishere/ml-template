@@ -59,6 +59,7 @@ def build_checkpoint(trainer: Any, metrics: dict[str, Any] | None = None) -> dic
     dataset_version_attr = getattr(trainer, "_dataset_version", None)
     if dataset_version_attr is not None:
         from dataclasses import asdict
+
         dataset_version = asdict(dataset_version_attr) if hasattr(dataset_version_attr, "__dataclass_fields__") else {}
     elif hasattr(trainer, "_dataset_version") and isinstance(trainer._dataset_version, dict):
         dataset_version = trainer._dataset_version

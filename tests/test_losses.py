@@ -160,17 +160,23 @@ class TestDiceLoss:
 
 class TestCombinedLoss:
     def test_instantiate(self):
-        loss_fn = LOSSES.instantiate("combined", losses=[
-            {"name": "cross_entropy", "weight": 1.0},
-            {"name": "dice", "weight": 0.5},
-        ])
+        loss_fn = LOSSES.instantiate(
+            "combined",
+            losses=[
+                {"name": "cross_entropy", "weight": 1.0},
+                {"name": "dice", "weight": 0.5},
+            ],
+        )
         assert loss_fn is not None
 
     def test_forward(self):
-        loss_fn = LOSSES.instantiate("combined", losses=[
-            {"name": "cross_entropy", "weight": 1.0},
-            {"name": "focal", "weight": 0.5},
-        ])
+        loss_fn = LOSSES.instantiate(
+            "combined",
+            losses=[
+                {"name": "cross_entropy", "weight": 1.0},
+                {"name": "focal", "weight": 0.5},
+            ],
+        )
         preds = torch.randn(4, 10)
         targets = torch.randint(0, 10, (4,))
         loss = loss_fn(preds, targets)

@@ -34,8 +34,7 @@ class FewShotEvaluator:
         self.config = config
         self.datamodule = datamodule
         self.device = get_device()
-        self.num_classes = config.get("model", {}).get("num_classes",
-                           config.get("dataset", {}).get("num_classes", 10))
+        self.num_classes = config.get("model", {}).get("num_classes", config.get("dataset", {}).get("num_classes", 10))
         self._class_indices: dict[int, list[int]] | None = None
 
     def evaluate(
@@ -97,7 +96,7 @@ class FewShotEvaluator:
             indices.extend(sampled)
 
         rng.shuffle(indices)
-        return Subset(dataset, indices[:k * self.num_classes])
+        return Subset(dataset, indices[: k * self.num_classes])
 
     def _few_shot_episode(self, k: int, mode: str, seed: int) -> float:
         dataset = self.datamodule.train_dataset
@@ -189,8 +188,7 @@ class FewShotEvaluator:
         ax.grid(True, alpha=0.3)
 
         for i, (k, m) in enumerate(zip(ks, means)):
-            ax.annotate(f"{m:.2%}", (k, m), textcoords="offset points", xytext=(0, 10),
-                        ha="center", fontsize=8)
+            ax.annotate(f"{m:.2%}", (k, m), textcoords="offset points", xytext=(0, 10), ha="center", fontsize=8)
 
         if save_path:
             save_path = Path(save_path)

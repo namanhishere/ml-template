@@ -16,11 +16,7 @@ _IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif", ".webp"}
 
 
 def _find_classes(root: str) -> tuple[list[str], dict[str, int]]:
-    entries = sorted(
-        entry.name
-        for entry in os.scandir(root)
-        if entry.is_dir() and not entry.name.startswith(".")
-    )
+    entries = sorted(entry.name for entry in os.scandir(root) if entry.is_dir() and not entry.name.startswith("."))
     class_to_idx = {name: i for i, name in enumerate(entries)}
     return entries, class_to_idx
 
@@ -50,9 +46,7 @@ def _gather_samples_from_csv(csv_path: str, root_dir: str | None = None) -> list
             path_idx = header.index("image_path")
             label_idx = header.index("label")
         except ValueError:
-            raise ValueError(
-                f"CSV '{csv_path}' must contain 'image_path' and 'label' columns. Found: {header}"
-            )
+            raise ValueError(f"CSV '{csv_path}' must contain 'image_path' and 'label' columns. Found: {header}")
 
         for row in reader:
             img_path = row[path_idx]

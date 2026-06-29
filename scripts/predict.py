@@ -13,7 +13,9 @@ def main():
     parser.add_argument("--input", type=str, help="Path to image or text file")
     parser.add_argument("--input-dir", type=str, help="Path to directory of inputs")
     args = parser.parse_args()
-    predictor = PREDICTORS.instantiate("classification", ckpt_path=args.ckpt_path, device="cuda:0" if torch.cuda.is_available() else "cpu")
+    predictor = PREDICTORS.instantiate(
+        "classification", ckpt_path=args.ckpt_path, device="cuda:0" if torch.cuda.is_available() else "cpu"
+    )
     result = predictor.predict(args.input)
     print(result)
 

@@ -23,9 +23,7 @@ class ONNXExporter(BaseExporter):
         try:
             import onnx  # noqa: F401
         except ImportError:
-            raise ImportError(
-                "onnx is required for ONNX export. Install it with: pip install onnx onnxruntime"
-            )
+            raise ImportError("onnx is required for ONNX export. Install it with: pip install onnx onnxruntime")
 
         if input_names is None:
             input_names = ["input"]

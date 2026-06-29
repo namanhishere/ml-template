@@ -33,8 +33,7 @@ class DataAblator:
         self.config = config
         self.datamodule = datamodule
         self.device = get_device()
-        self.num_classes = config.get("model", {}).get("num_classes",
-                           config.get("dataset", {}).get("num_classes", 10))
+        self.num_classes = config.get("model", {}).get("num_classes", config.get("dataset", {}).get("num_classes", 10))
 
     def ablate_by_size(self, fractions: list[float] | None = None) -> "pd.DataFrame":
         import pandas as pd
@@ -54,13 +53,15 @@ class DataAblator:
             train_loader = DataLoader(subset, batch_size=min(32, n_samples), shuffle=True)
 
             metrics = self._train_on_subset(train_loader, val_loader, epochs=10)
-            results.append({
-                "fraction": frac,
-                "n_samples": n_samples,
-                "train_loss": metrics.get("train/loss", float("nan")),
-                "val_loss": metrics.get("val/loss", float("nan")),
-                "accuracy": metrics.get("val/acc", metrics.get("accuracy", float("nan"))),
-            })
+            results.append(
+                {
+                    "fraction": frac,
+                    "n_samples": n_samples,
+                    "train_loss": metrics.get("train/loss", float("nan")),
+                    "val_loss": metrics.get("val/loss", float("nan")),
+                    "accuracy": metrics.get("val/acc", metrics.get("accuracy", float("nan"))),
+                }
+            )
             logger.info("Size ablation %.0f%%: val_acc=%.4f", frac * 100, results[-1]["accuracy"])
 
         return pd.DataFrame(results)
@@ -93,12 +94,14 @@ class DataAblator:
             train_loader = DataLoader(subset, batch_size=32, shuffle=True)
             metrics = self._train_on_subset(train_loader, val_loader, epochs=10)
             acc = metrics.get("val/acc", metrics.get("accuracy", 0.0))
-            results.append({
-                "dropped_class": drop_class,
-                "n_remaining": len(keep_indices),
-                "accuracy": acc,
-                "delta": baseline_acc - acc,
-            })
+            results.append(
+                {
+                    "dropped_class": drop_class,
+                    "n_remaining": len(keep_indices),
+                    "accuracy": acc,
+                    "delta": baseline_acc - acc,
+                }
+            )
             logger.info("Class ablation, dropped=%d: acc=%.4f delta=%.4f", drop_class, acc, baseline_acc - acc)
 
         return pd.DataFrame(results)
@@ -129,12 +132,14 @@ class DataAblator:
             train_loader = DataLoader(subset, batch_size=32, shuffle=True)
             metrics = self._train_on_subset(train_loader, val_loader, epochs=10)
             acc = metrics.get("val/acc", metrics.get("accuracy", 0.0))
-            results.append({
-                "dropped_bin": keep_bin,
-                "difficulty_range": f"[{bins[keep_bin]:.2f}, {bins[min(keep_bin + 1, len(bins) - 1)]:.2f}]",
-                "n_kept": len(keep_idx),
-                "accuracy": acc,
-            })
+            results.append(
+                {
+                    "dropped_bin": keep_bin,
+                    "difficulty_range": f"[{bins[keep_bin]:.2f}, {bins[min(keep_bin + 1, len(bins) - 1)]:.2f}]",
+                    "n_kept": len(keep_idx),
+                    "accuracy": acc,
+                }
+            )
             logger.info("Difficulty ablation, dropped_bin=%d: acc=%.4f", keep_bin, acc)
 
         return pd.DataFrame(results)
@@ -207,8 +212,8 @@ class DataAblator:
                 if labels is not None:
                     true_label = labels[idx] if isinstance(labels, list) else labels
                     for e in range(1, len(preds)):
-                        was_correct = (preds[e - 1] == true_label)
-                        is_wrong = (preds[e] != true_label)
+                        was_correct = preds[e - 1] == true_label
+                        is_wrong = preds[e] != true_label
                         if was_correct and is_wrong:
                             forget_count += 1
                     forgetting_scores.append(forget_count)

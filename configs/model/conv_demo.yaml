@@ -1,0 +1,4 @@
+name: conv_demo
+num_classes: 10
+channels: [32, 64, 128, 256]
+dropout: 0.0

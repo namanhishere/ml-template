@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """Fine-tune with configurable strategy."""
+
 import hydra
 from omegaconf import DictConfig
 from src.training.trainer import Trainer
 from src.tools.fine_tuning import FineTuner
 from src.utils.distributed import setup_logging
 from src.utils.seed import set_seed
+
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def main(cfg: DictConfig):
@@ -24,6 +26,7 @@ def main(cfg: DictConfig):
         unfreeze_epochs=tool_cfg.get("unfreeze_epochs", 5),
     )
     print(f"Fine-tuning complete. Best val accuracy: {results.get('best_val_acc', 'N/A')}")
+
 
 if __name__ == "__main__":
     main()

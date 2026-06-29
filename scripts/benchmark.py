@@ -21,7 +21,11 @@ def main():
     model.load_state_dict(ckpt["model_state"])
     model.to(args.device).eval()
     batch_sizes = [int(b) for b in args.batch_sizes.split(",")]
-    input_shape = (3, config.get("dataset", {}).get("image_size", 224), config.get("dataset", {}).get("image_size", 224))
+    input_shape = (
+        3,
+        config.get("dataset", {}).get("image_size", 224),
+        config.get("dataset", {}).get("image_size", 224),
+    )
     df = benchmark_inference(model, input_shape, batch_sizes, args.device)
     print(df.to_string())
 

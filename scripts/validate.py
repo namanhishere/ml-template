@@ -21,12 +21,14 @@ def main():
     set_seed(ckpt["seed"])
     exp_cls = EXPERIMENTS.get(config.experiment.name)
     from src.models.zoo import BackboneFactory
+
     backbone = BackboneFactory.create(config.model.name, pretrained=False, num_classes=config.model.num_classes)
     model = backbone
     experiment = exp_cls(model, config)
     experiment.model.load_state_dict(ckpt["model_state"])
     evaluator = Evaluator(experiment, config)
     from src.data.datamodule import BaseDataModule
+
     dm = BaseDataModule(config)
     dm.setup()
     dl = dm.test_dataloader() if args.split == "test" else dm.val_dataloader()

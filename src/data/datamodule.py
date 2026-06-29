@@ -17,8 +17,9 @@ logger = logging.getLogger("ai-ml-template")
 class BaseDataModule:
     def __init__(self, config: DictConfig) -> None:
         self.config = config
-        self.batch_size: int = config.get("batch_size", 32)
-        self.num_workers: int = config.get("num_workers", 4)
+        trainer_cfg = config.get("trainer", {})
+        self.batch_size: int = trainer_cfg.get("batch_size", config.get("batch_size", 32))
+        self.num_workers: int = trainer_cfg.get("num_workers", config.get("num_workers", 4))
         self.pin_memory: bool = config.get("pin_memory", True)
         self.drop_last: bool = config.get("drop_last", False)
         self.seed: int = config.get("seed", 42)

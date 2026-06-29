@@ -118,10 +118,7 @@ class BackboneFactory:
         source, model_name = cls._parse_name(name)
         backend = cls.source_registry.get(source)
         if backend is None:
-            raise KeyError(
-                f"Unknown backbone source '{source}'. "
-                f"Available: {list(cls.source_registry.keys())}"
-            )
+            raise KeyError(f"Unknown backbone source '{source}'. Available: {list(cls.source_registry.keys())}")
         return backend.create(model_name, pretrained=pretrained, **kwargs)
 
     @classmethod
@@ -129,10 +126,7 @@ class BackboneFactory:
         source, model_name = cls._parse_name(name)
         backend = cls.source_registry.get(source)
         if backend is None:
-            raise KeyError(
-                f"Unknown backbone source '{source}'. "
-                f"Available: {list(cls.source_registry.keys())}"
-            )
+            raise KeyError(f"Unknown backbone source '{source}'. Available: {list(cls.source_registry.keys())}")
         return backend.get_feature_dim(model_name)
 
     @classmethod
@@ -140,10 +134,7 @@ class BackboneFactory:
         if source is not None:
             backend = cls.source_registry.get(source)
             if backend is None:
-                raise KeyError(
-                    f"Unknown backbone source '{source}'. "
-                    f"Available: {list(cls.source_registry.keys())}"
-                )
+                raise KeyError(f"Unknown backbone source '{source}'. Available: {list(cls.source_registry.keys())}")
             return [f"{source}://{m}" for m in backend.list_available()]
         result: list[str] = []
         for src, backend in cls.source_registry.items():
@@ -152,21 +143,15 @@ class BackboneFactory:
         return result
 
     @classmethod
-    def _from_torchvision(
-        cls, name: str, pretrained: bool = True, **kwargs: Any
-    ) -> nn.Module:
+    def _from_torchvision(cls, name: str, pretrained: bool = True, **kwargs: Any) -> nn.Module:
         return cls.create(f"torchvision://{name}", pretrained=pretrained, **kwargs)
 
     @classmethod
-    def _from_timm(
-        cls, name: str, pretrained: bool = True, **kwargs: Any
-    ) -> nn.Module:
+    def _from_timm(cls, name: str, pretrained: bool = True, **kwargs: Any) -> nn.Module:
         return cls.create(f"timm://{name}", pretrained=pretrained, **kwargs)
 
     @classmethod
-    def _from_hf(
-        cls, name: str, pretrained: bool = True, **kwargs: Any
-    ) -> nn.Module:
+    def _from_hf(cls, name: str, pretrained: bool = True, **kwargs: Any) -> nn.Module:
         return cls.create(f"hf://{name}", pretrained=pretrained, **kwargs)
 
     @staticmethod
@@ -174,9 +159,7 @@ class BackboneFactory:
         if "://" in name:
             source, model_name = name.split("://", 1)
             return source, model_name
-        raise ValueError(
-            f"Invalid backbone name '{name}'. Expected format: 'source://model_name'"
-        )
+        raise ValueError(f"Invalid backbone name '{name}'. Expected format: 'source://model_name'")
 
 
 BackboneFactory.register_source("torchvision", _TorchVisionBackend())

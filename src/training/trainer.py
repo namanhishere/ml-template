@@ -108,7 +108,9 @@ class Trainer:
                 break
 
             if self._scheduler is not None and not self._step_scheduler:
-                if hasattr(self._scheduler, "step") and not isinstance(self._scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                if hasattr(self._scheduler, "step") and not isinstance(
+                    self._scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau
+                ):
                     self._scheduler.step()
                 elif isinstance(self._scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
                     monitor_metric = metrics.get("val/loss", 0.0)
@@ -160,8 +162,9 @@ class Trainer:
         dataset_cfg = self.config.get("dataset", {})
         dataset_name = dataset_cfg.get("name", "")
         if dataset_name:
-            from src.data.datamodule import BaseDataModule
-            self._datamodule = BaseDataModule(config=self.config)
+            from src.data.datamodules.image_datamodule import ImageDataModule
+
+            self._datamodule = ImageDataModule(config=self.config)
         else:
             raise ValueError("No dataset name specified in config.dataset.name")
 
@@ -193,18 +196,23 @@ class Trainer:
         num_classes = model_cfg.get("num_classes", config.get("dataset", {}).get("num_classes", 10))
 
         if MODELS.__contains__(model_name):
-            model = MODELS.instantiate(model_name, num_classes=num_classes, pretrained=pretrained)
+            model = MODELS.instantiate(model_name, num_classes=num_classes)
         else:
             backbone = BackboneFactory.create(backbone_source, pretrained=pretrained, num_classes=num_classes)
             feature_dim = BackboneFactory.get_feature_dim(backbone_source)
             from src.models.heads.classification import ClassificationHead
+
             head = ClassificationHead(in_features=feature_dim, num_classes=num_classes)
             model = nn.Sequential(backbone, nn.Flatten(1), head)
 
+        experiment_cfg = config.get("experiment", {})
+        loss_config = experiment_cfg.get("loss", config.get("loss", {}))
         experiment = EXPERIMENTS.instantiate(
             experiment_name,
             model=model,
             config=config,
+            num_classes=experiment_cfg.get("num_classes", num_classes),
+            loss_config=loss_config,
         )
 
         callbacks_list: list[Any] = []

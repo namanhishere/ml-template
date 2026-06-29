@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """Few-shot evaluation with K samples per class."""
+
 import hydra
 from omegaconf import DictConfig
 from src.training.trainer import Trainer
 from src.tools.few_shot import FewShotEvaluator
 from src.utils.distributed import setup_logging
 from src.utils.seed import set_seed
+
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def main(cfg: DictConfig):
@@ -27,6 +29,7 @@ def main(cfg: DictConfig):
     print("\nFew-Shot Results:")
     for k, stats in results.items():
         print(f"  {k}: {stats['mean']:.4f} \u00b1 {stats['std']:.4f}")
+
 
 if __name__ == "__main__":
     main()
