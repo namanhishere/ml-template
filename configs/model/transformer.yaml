@@ -1,0 +1,6 @@
+name: transformer
+pretrained: false
+num_classes: 10
+d_model: 512
+nhead: 8
+num_layers: 6

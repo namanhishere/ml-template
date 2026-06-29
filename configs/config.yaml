@@ -1,0 +1,64 @@
+defaults:
+  - experiment: classification
+  - model: resnet
+  - dataset: image
+  - optimizer: adam
+  - scheduler: cosine
+  - loss: cross_entropy
+  - trainer: default
+  - _self_
+
+seed: 42
+experiment: {}
+model:
+  name: resnet50
+  pretrained: true
+  num_classes: 10
+dataset:
+  name: image_classification
+  data_dir: ./data
+  image_size: 224
+  num_classes: 10
+loss:
+  name: cross_entropy
+optimizer:
+  name: adam
+  params:
+    lr: 0.001
+    weight_decay: 0.0001
+scheduler:
+  name: cosine
+  warmup_epochs: 0
+  T_max: 100
+trainer:
+  name: default
+  max_epochs: 100
+  batch_size: 32
+  num_workers: 4
+  precision: fp16
+  grad_accumulation: 1
+  checkpoint:
+    save_dir: ./checkpoints
+    save_top_k: 3
+    save_last: true
+    save_every_n_epochs: 1
+    monitor: val/loss
+    mode: min
+callbacks:
+  - name: checkpoint
+  - name: early_stop
+    patience: 10
+    monitor: val/loss
+    mode: min
+  - name: lr_monitor
+    log_every_n_steps: 100
+  - name: progress
+  - name: mlflow
+    experiment_name: default
+  - name: ema
+    decay: 0.999
+hydra:
+  run:
+    dir: ./outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ./outputs/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}

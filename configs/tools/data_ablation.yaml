@@ -1,0 +1,6 @@
+# @package _group_
+strategies: ["size", "class", "difficulty"]
+fractions: [0.1, 0.25, 0.5, 0.75, 1.0]
+n_difficulty_bins: 5
+compute_influence: true
+ablation_epochs: 10

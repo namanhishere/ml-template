@@ -1,0 +1,4 @@
+# @package _group_
+overfit_window: 10
+plateau_window: 15
+divergence_ratio: 3.0

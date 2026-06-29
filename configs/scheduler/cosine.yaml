@@ -1,0 +1,5 @@
+name: cosine
+T_max: ${trainer.max_epochs}
+eta_min: 0
+warmup_epochs: 0
+warmup_start_lr: 0.000001

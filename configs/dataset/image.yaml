@@ -1,0 +1,4 @@
+name: image_classification
+data_dir: ./data
+image_size: 224
+num_classes: 10

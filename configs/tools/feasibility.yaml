@@ -1,0 +1,5 @@
+# @package _group_
+tests: ["overfit", "random_label"]
+num_samples: 50
+max_epochs: 100
+target_accuracy: 0.99

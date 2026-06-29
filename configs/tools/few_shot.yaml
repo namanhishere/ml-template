@@ -1,0 +1,5 @@
+# @package _group_
+k_shots: [1, 5, 10, 20]
+mode: pretrained       # pretrained | scratch
+n_episodes: 10
+max_epochs_per_episode: 20

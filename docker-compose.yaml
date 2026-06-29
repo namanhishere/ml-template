@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  train:
+    build: .
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0,1,2,3
+      - MLFLOW_TRACKING_URI=file:///workspace/mlruns
+    volumes:
+      - .:/workspace
+      - ./checkpoints:/workspace/checkpoints
+      - ./outputs:/workspace/outputs
+      - ./data:/workspace/data
+    command: >
+      torchrun --nproc_per_node=4
+      --master_port=29500
+      scripts/train.py
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 4
+              capabilities: [gpu]
+
+  serve:
+    build: .
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - CUDA_VISIBLE_DEVICES=0
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/workspace
+      - ./checkpoints:/workspace/checkpoints
+    command: python scripts/serve.py --ckpt-path checkpoints/best.pt --port 8000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  dev:
+    build: .
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - CUDA_VISIBLE_DEVICES=0
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/workspace
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root

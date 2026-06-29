@@ -1,0 +1,4 @@
+name: vit_b_16
+pretrained: true
+num_classes: 10
+image_size: 224

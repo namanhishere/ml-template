@@ -1,0 +1,4 @@
+name: text_classification
+data_dir: ./data
+max_length: 512
+num_classes: 2

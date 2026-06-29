@@ -1,0 +1,4 @@
+# @package _group_
+max_epochs: 50
+lr: 0.01
+batch_size: 128
